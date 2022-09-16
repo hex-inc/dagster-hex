@@ -1,2 +1,16 @@
-# dagster-hex
-A Dagster library for triggering Hex project runs
+# Hex Dagster Library
+
+Provides XXX to trigger Hex project runs.
+
+
+## Requirements
+
+* Hex API Token
+
+## Initial Setup
+
+Install the package.
+
+```
+
+```
