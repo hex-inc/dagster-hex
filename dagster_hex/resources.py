@@ -16,7 +16,7 @@ from .consts import (
     TERMINAL_STATUSES,
     VALID_STATUSES,
 )
-from .types import RunResponse, StatusResponse
+from .types import HexOutput, RunResponse, StatusResponse
 
 
 class HexResource:
@@ -160,7 +160,7 @@ class HexResource:
         kill_on_timeout: bool = True,
         poll_interval: float = DEFAULT_POLL_INTERVAL,
         poll_timeout: Optional[float] = DEFAULT_POLL_TIMEOUT,
-    ) -> StatusResponse:
+    ) -> HexOutput:
         """Trigger a project and poll until complete
 
         Args:
@@ -182,11 +182,11 @@ class HexResource:
             Dict[str, Any]: Parsed json output from the API
         """
         run_response = self.run_project(project_id, inputs, update_cache)
-        run_id = run_response.runId
+        run_id = run_response["runId"]
         poll_start = datetime.datetime.now()
         while True:
             run_status = self.run_status(project_id, run_id)
-            project_status = run_status.status
+            project_status = run_status["status"]
 
             self._log.debug(run_status)
             self._log.info(
@@ -204,7 +204,7 @@ class HexResource:
             if project_status in TERMINAL_STATUSES:
                 raise Failure(
                     f"Project Run failed with status {project_status}. "
-                    f"See Run URL for more info {run_response.runUrl}"
+                    f"See Run URL for more info {run_response['runUrl']}"
                 )
 
             if (
@@ -218,11 +218,11 @@ class HexResource:
                     f"Project {project_id} for run: {run_id}' timed out after "
                     f"{datetime.datetime.now() - poll_start}. "
                     f"Last status was {project_status}. "
-                    f"TraceId: {run_status.traceId}"
+                    f"TraceId: {run_status['traceId']}"
                 )
 
             time.sleep(poll_interval)
-        return run_status
+        return HexOutput(run_response=run_response, status_response=run_status)
 
 
 @resource(
@@ -251,7 +251,7 @@ class HexResource:
     },
     description="This resource helps manage Hex",
 )
-def ht_resource(context) -> HexResource:
+def hex_resource(context) -> HexResource:
     """
     This resource allows users to programmatically interface with the Hex REST API
     """
