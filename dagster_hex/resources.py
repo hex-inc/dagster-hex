@@ -8,6 +8,8 @@ from urllib.parse import urljoin
 import requests
 from dagster import Failure, Field, StringSource, get_dagster_logger, resource
 
+from dagster_hex.types import HexOutput, RunResponse, StatusResponse
+
 from .consts import (
     COMPLETE,
     DEFAULT_POLL_INTERVAL,
@@ -16,21 +18,17 @@ from .consts import (
     TERMINAL_STATUSES,
     VALID_STATUSES,
 )
-from .types import HexOutput, RunResponse, StatusResponse
 
 
 class HexResource:
     """
     This class exposes methods on top of the Hex REST API.
 
-    :param api_key: Hex API Token to use for authentication
-    :type api_key: str
-    :param base_url: Base URL for the API
-    :type: base_url: str
-    :param request_max_retries: Number of times to retry a failed request
-    :type request_max_retries: int
-    :number request_retry_delay: Time, in seconds, to wait between retries
-    :type request_retry_delay: int
+    Args:
+        api_key (str): Hex API Token to use for authentication
+        base_url (str): Base URL for the API
+        request_max_retries (int): Number of times to retry a failed request
+        request_retry_delay (int): Time, in seconds, to wait between retries
     """
 
     def __init__(
@@ -136,6 +134,17 @@ class HexResource:
         return response
 
     def run_status(self, project_id, run_id) -> StatusResponse:
+        """
+        Fetches the status of a run for a given project
+
+        Args:
+            project_id (str): The Project ID to fetch results for
+            run_id (str): The Run ID of the project to fetch results for
+
+        Returns:
+            StatusResponse
+        """
+
         endpoint = f"api/v1/project/{project_id}/run/{run_id}"
         method = "GET"
 
@@ -146,6 +155,16 @@ class HexResource:
         return response
 
     def cancel_run(self, project_id, run_id) -> str:
+        """
+        Cancels a run in progress.
+        Args:
+            project_id: The Project ID for the run
+            run_id: The Run ID to cancel
+
+        Returns:
+            The Run ID that was cancelled
+
+        """
         endpoint = f"api/v1/project/{project_id}/run/{run_id}"
         method = "DELETE"
 
