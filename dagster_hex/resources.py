@@ -78,6 +78,15 @@ class HexResource:
                     headers=headers,
                     params=data,
                 )
+                if response.status_code == 422:
+                    # 422 statuses from Hex may have additional error information as a
+                    # JSON payload
+                    try:
+                        msg = response.json()
+                    except requests.exceptions.JSONDecodeError:
+                        msg = response.text
+                    raise Failure(f"Received 422 status from Hex: {msg}")
+
                 response.raise_for_status()
                 if response.headers.get("Content-Type", "").startswith(
                     "application/json"
