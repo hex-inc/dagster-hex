@@ -72,12 +72,27 @@ class HexResource:
         num_retries = 0
         while True:
             try:
-                response = requests.request(
-                    method=method,
-                    url=url,
-                    headers=headers,
-                    params=data,
-                )
+                if method == "GET":
+                    response = requests.request(
+                        method=method,
+                        url=url,
+                        headers=headers,
+                        params=data,
+                    )
+                elif method == "POST":
+                    response = requests.request(
+                        method=method,
+                        url=url,
+                        headers=headers,
+                        json=data,
+                    )
+                else:
+                    response = requests.request(
+                        method=method,
+                        url=url,
+                        headers=headers,
+                        data=data,
+                    )
                 if response.status_code == 422:
                     # 422 statuses from Hex may have additional error information as a
                     # JSON payload
