@@ -9,6 +9,7 @@ jobs:
           command: |
             pip install -e .[dev]
             make lint
+            make tests
   build:
     docker:
       - image: cimg/python:3.9.2

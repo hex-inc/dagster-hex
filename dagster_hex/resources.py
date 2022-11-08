@@ -147,12 +147,16 @@ class HexResource:
         """
         method = "POST"
         endpoint = f"/api/v1/project/{project_id}/run"
+        data: Dict[str, Any] = {"updateCache": update_cache}
+        if inputs:
+            data["inputParams"] = inputs
+
         response = cast(
             RunResponse,
             self.make_request(
                 method=method,
                 endpoint=endpoint,
-                data={"inputParams": inputs, "updateCache": update_cache},
+                data=data,
             ),
         )
         return response
