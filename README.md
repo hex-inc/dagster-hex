@@ -51,5 +51,6 @@ run_url
 run_status_url	
 trace_id	
 run_id	
-elapsed_time	
+elapsed_time
+notifications	
 ```
