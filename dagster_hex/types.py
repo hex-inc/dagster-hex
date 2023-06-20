@@ -1,4 +1,4 @@
-from typing import NamedTuple, TypedDict
+from typing import List, NamedTuple, TypedDict
 
 RunResponse = TypedDict(
     "RunResponse",
@@ -10,6 +10,16 @@ RunResponse = TypedDict(
         "traceId": str,
     },
 )
+NotificationResponse = TypedDict(
+    "NotificationResponse",
+    {
+        "type": str,
+        "recipientType": str,
+        "includeSuccessScreenshot": bool,
+        "recipients": List[dict],
+    },
+)
+
 
 StatusResponse = TypedDict(
     "StatusResponse",
@@ -22,6 +32,19 @@ StatusResponse = TypedDict(
         "endTime": str,
         "elapsedTime": int,
         "traceId": str,
+        "notifications": List[NotificationResponse],
+    },
+)
+
+
+NotificationDetails = TypedDict(
+    "NotificationDetails",
+    {
+        "type": str,
+        "includeSuccessScreenshot": bool,
+        "slackChannelIds": List[str],
+        "userIds": List[str],
+        "groupIds": List[str],
     },
 )
 

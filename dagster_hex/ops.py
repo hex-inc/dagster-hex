@@ -32,6 +32,13 @@ from .types import HexOutput
             default_value=None,
             description="Additional inputs for the Hex Project",
         ),
+        "notifications": Field(
+            Noneable(list),
+            is_required=False,
+            default_value=None,
+            description="A list of notification details that will be delivered "
+            + "once a project run completes",
+        ),
         "update_cache": Field(
             bool,
             is_required=False,
@@ -71,6 +78,7 @@ def hex_project_op(context):
     hex_output: HexOutput = context.resources.hex.run_and_poll(
         project_id=context.op_config["project_id"],
         inputs=context.op_config["inputs"],
+        notifications=context.op_config["notifications"],
         update_cache=context.op_config["update_cache"],
         kill_on_timeout=context.op_config["kill_on_timeout"],
         poll_interval=context.op_config["poll_interval"],
