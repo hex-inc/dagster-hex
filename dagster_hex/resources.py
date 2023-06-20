@@ -2,13 +2,18 @@ import datetime
 import logging
 import time
 from importlib.metadata import PackageNotFoundError, version
-from typing import Any, Dict, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 from urllib.parse import urljoin
 
 import requests
 from dagster import Failure, Field, StringSource, get_dagster_logger, resource
 
-from dagster_hex.types import HexOutput, RunResponse, StatusResponse
+from dagster_hex.types import (
+    HexOutput,
+    NotificationDetails,
+    RunResponse,
+    StatusResponse,
+)
 
 from .consts import (
     COMPLETE,
@@ -39,7 +44,6 @@ class HexResource:
         request_max_retries: int = 3,
         request_retry_delay: float = 0.25,
     ):
-
         self._log = log
         self._api_key = api_key
         self._request_max_retries = request_max_retries
@@ -129,6 +133,7 @@ class HexResource:
         project_id: str,
         inputs: Optional[Dict[str, Any]] = None,
         update_cache: bool = False,
+        notifications: List[NotificationDetails] = [],
     ) -> RunResponse:
         """Trigger a sync and initiate a sync run
 
@@ -150,6 +155,9 @@ class HexResource:
         data: Dict[str, Any] = {"updateCache": update_cache}
         if inputs:
             data["inputParams"] = inputs
+
+        if notifications:
+            data["notifications"] = notifications
 
         response = cast(
             RunResponse,
@@ -203,6 +211,7 @@ class HexResource:
         self,
         project_id: str,
         inputs: Optional[dict],
+        notifications: List[NotificationDetails] = [],
         update_cache: bool = False,
         kill_on_timeout: bool = True,
         poll_interval: float = DEFAULT_POLL_INTERVAL,
@@ -228,7 +237,12 @@ class HexResource:
         Returns:
             Dict[str, Any]: Parsed json output from the API
         """
-        run_response = self.run_project(project_id, inputs, update_cache)
+        run_response = self.run_project(
+            project_id,
+            inputs=inputs,
+            notifications=notifications,
+            update_cache=update_cache,
+        )
         run_id = run_response["runId"]
         poll_start = datetime.datetime.now()
         while True:
