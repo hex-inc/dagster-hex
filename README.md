@@ -5,7 +5,7 @@
 To install the library, use pip alongside your existing Dagster environment.
 
 ```bash
-pip install dagster_hex
+pip install dagster-hex
 ```
 
 ### Configuration
