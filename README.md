@@ -1,3 +1,6 @@
+> [!WARNING]
+> This integration has been moved to [dagster-io/community-integrations](https://github.com/dagster-io/community-integrations/tree/main/libraries/dagster-hex). Please open new pull requests and issues in that repository instead. Thank you!
+
 # Hex Dagster Library
 
 ### Installation
